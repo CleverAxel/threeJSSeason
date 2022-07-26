@@ -13,13 +13,22 @@ export class AnimationService{
         this.animationMixers = [];
         this.nbrMixer = 0;
         this.counter = 0;
-        //this.animationInAction = false;
         if(this.callback){
             this.callback();
         }
         /*this.animationMixers.forEach(mixer => {
             mixer.stopAllAction();
         });*/
+    }
+
+    public static hardReset(){
+        this.animationInAction = false;
+        this.animationMixers.forEach(mixer => {
+            mixer.stopAllAction();
+        });
+        this.nbrMixer = 0;
+        this.counter = 0;
+        this.animationActions = [];
     }
 
     public static GetAnimationMixerFromAction(){
@@ -41,12 +50,15 @@ export class AnimationService{
             action.play();
         });
 
-        for(let i = 0; i < this.animationMixers.length; i++){
+        for(let i = 0; i < this.animationMixers.length; i++){            
             this.animationMixers[i].addEventListener("finished", this.animationMixerFinished.bind(this));
         }
+        
     }
 
-    private static animationMixerFinished(){
+    private static animationMixerFinished(e:any){
+        //this.animationMixers = this.animationMixers.filter(mixer => mixer.getRoot().uuid != e.action._mixer._root.uuid);
+        //console.log(e.action._mixer._root.uuid)
         this.counter++;
         if(this.counter == this.nbrMixer){ //every mixer is finished
             for(let i = 0; i < this.animationMixers.length; i++){

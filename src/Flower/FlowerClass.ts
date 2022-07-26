@@ -4,25 +4,25 @@ import { AnimationService } from "../Services/AnimationService";
 import { FlowerAnimation } from "./FlowerAnimation";
 
 export class Flower{
-    public mainMesh:Mesh = new Mesh();
+    public mesh:Mesh = new Mesh();
     public flowerMesh:Mesh;
 
     constructor(flowerMesh:Mesh, scale:number, position?:IVector3NRotationY){
         this.flowerMesh = flowerMesh;
-        this.mainMesh.scale.set(scale, scale, scale);
+        this.mesh.scale.set(scale, scale, scale);
         if(position){
-            this.mainMesh.position.set(position.vector.x, position.vector.y, position.vector.z);
-            this.mainMesh.rotation.y = position.rotationY;
+            this.mesh.position.set(position.vector.x, position.vector.y, position.vector.z);
+            this.mesh.rotation.y = position.rotationY;
             //this.flowerMesh.position.set(0, -1.8, 0);
-            this.mainMesh.visible = false;
+            this.mesh.visible = false;
         }
-        this.mainMesh.add(flowerMesh);
+        this.mesh.add(flowerMesh);
     }
 
-    animateFlowerSpring(){
-        if(this.mainMesh.visible == false){
+    animateFlowerAppears(){
+        if(this.mesh.visible == false){
             this.flowerMesh.position.set(0, -1.8, 0);
-            this.mainMesh.visible = true;
+            this.mesh.visible = true;
             const mixer = new AnimationMixer(this.flowerMesh);
             AnimationService.animationActions.push(mixer.clipAction(FlowerAnimation.moveFlowerClip));
         }
@@ -30,6 +30,6 @@ export class Flower{
 
     setFlowerToFinalPosition(){
         this.flowerMesh.position.set(0,0,0);
-        this.mainMesh.visible = true;
+        this.mesh.visible = true;
     }
 }

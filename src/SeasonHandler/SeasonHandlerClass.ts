@@ -1,9 +1,14 @@
-import { flowers, trees } from "../main";
+import { bee, flowers, trees } from "../main";
 import { AnimationService } from "../Services/AnimationService";
 
 export class SeasonHandler{
     private readonly buttons = document.querySelectorAll<HTMLButtonElement>(".containerButtons > button");
     public seasonChoosed?:season;
+    private isOnScene = {
+        leave:false,
+        flower:false,
+        bee:false,
+    }
     constructor(){
         this.init();
     }
@@ -19,7 +24,10 @@ export class SeasonHandler{
                         }
                     }
                     else if(i == 1){
-                        this.seasonChoosed = season.summer;
+                        if(this.seasonChoosed != season.summer){
+                            this.seasonChoosed = season.summer;
+                            this.startSummer();
+                        }
                     }
                     else if(i == 2){
                         this.seasonChoosed = season.autumn;
@@ -32,42 +40,91 @@ export class SeasonHandler{
         }
     }
     //#region SPRING
+    /**********************************
+     * First call for spring animation
+     **********************************/
     private startSpring(){
-        AnimationService.animationInAction = true;
-
-        //SECOND CALL
-        const callFlowersSpring = () => {
-            //when leaves are there call flower
-            flowers.forEach(flower =>{
-                flower.animateFlowerSpring();
-            });
-            
-            AnimationService.GetAnimationMixerFromAction();
-            AnimationService.PlayAnimation(true, this.setPropsToFinalPositionSpring);
+        trees.forEach(tree => {
+            tree.SpringLeave();
+        });
+        if(this.isOnScene.flower == false){
+            this.MakeFlowersAppearWithAnimation();
+            this.isOnScene.flower = true;
+        }
+        if(this.isOnScene.bee == false){
+            bee.animateBeeAppears();
+            bee.makeBeeFollowPath();
+            this.isOnScene.bee = true;
         }
 
-        //FIRST CALL
-        trees.forEach(tree => {
-            tree.animateLeaveSpring();
-        });
         AnimationService.GetAnimationMixerFromAction();
-        AnimationService.PlayAnimation(true, callFlowersSpring);
+        AnimationService.PlayAnimation(true, this.setPropsToFinalPositionForSpring.bind(this));
+        this.isOnScene.leave = true;
     }
 
-    //THIRD CALL OR FINAL CALL
-    public setPropsToFinalPositionSpring(){
+    /********************************
+     * second call for spring animation
+     ********************************/
+    private setPropsToFinalPositionForSpring(){
         setTimeout(() => {                
-            trees.forEach(tree =>{
-                tree.setLeaveToFinalPosition();
-            });
-
-            flowers.forEach(flower =>{
-                flower.setFlowerToFinalPosition();
-            });
-            AnimationService.animationInAction = false;
+            this.SetLeaveToFinalPosition();
+            this.SetFlowersToFinalPosition();
+            bee.setBeeToFinalState();
         });
     }
     //#endregion
+
+
+
+    //#region SUMMER
+    /**********************************
+     * First call for summer animation
+     **********************************/
+    private startSummer(){
+        trees.forEach(tree => {
+            tree.SummerLeave();
+        });
+        if(this.isOnScene.flower == false){
+            this.MakeFlowersAppearWithAnimation();
+            this.isOnScene.flower = true;
+        }
+        if(this.isOnScene.bee){
+            bee.animateBeeDisappears();
+            this.isOnScene.bee = false;
+        }
+        AnimationService.GetAnimationMixerFromAction();
+        AnimationService.PlayAnimation(true, this.setPropsToFinalPositionForSummer.bind(this));
+    }
+    /**********************************
+     * second call for summer animation
+     **********************************/
+     private setPropsToFinalPositionForSummer(){
+        setTimeout(() => {                
+            this.SetLeaveToFinalPosition();
+            this.SetFlowersToFinalPosition();
+            bee.removeBeeFromScene();
+        });
+    }
+    //#endregion
+
+
+    private MakeFlowersAppearWithAnimation(){
+        flowers.forEach(flower =>{
+            flower.animateFlowerAppears();
+        });
+    }
+
+    private SetFlowersToFinalPosition(){
+        flowers.forEach(flower =>{
+            flower.setFlowerToFinalPosition();
+        });   
+    }
+
+    private SetLeaveToFinalPosition(){
+        trees.forEach(tree =>{
+            tree.setLeaveToFinalPosition();
+        });
+    }
 }
 
 enum season{

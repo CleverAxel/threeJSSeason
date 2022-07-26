@@ -16,6 +16,8 @@ export class TreeAnimation{
         '.material.opacity', 
         [0, 0.4], 
         [0, 1]
-    ); 
+    );
+
+
     public static moveLeaveClip = new AnimationClip('moveLeaveAndAppear', -1, [this.positionLeaveKF, this.opacityLeaveKF]);
 }

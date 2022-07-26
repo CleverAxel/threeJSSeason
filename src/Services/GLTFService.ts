@@ -6,7 +6,6 @@ export class GLTFService{
     public static async LoadGLTF(url:string, traverseMesh:boolean = false, material?:Material){
         let gltf = await this.GLTF_Loader.loadAsync(url);
         let mesh = gltf.scene.children[0] as THREE.Mesh;
-
         if(material){
             mesh.material = material;
         }

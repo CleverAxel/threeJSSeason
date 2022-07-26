@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { Bee } from "./Bee/BeeClass";
+import { PathCurve } from "./CurvePath/PathCurveClass";
 import { Flower } from "./Flower/FlowerClass";
 
 import { MainPlatform } from "./MainPlatform/MainPlatformClass";
@@ -13,9 +15,16 @@ const CONTAINER = document.getElementById("container") as HTMLDivElement;
 let leaveMesh = await GLTFService.LoadGLTF("/leaveTree.glb");
 let logMesh = await GLTFService.LoadGLTF("/logTree.glb");
 let flowerMesh = await GLTFService.LoadGLTF("/flower.gltf", true);
+let beeMesh = await GLTFService.LoadGLTF("/beeCopy.gltf", true);
 
-export const mainScene = new MainScene();
 export const seasonHandler = new SeasonHandler();
+export const mainScene = new MainScene();
+export const pathCurve = new PathCurve();
+mainScene.scene.add(pathCurve.mesh)
+
+export let bee = new Bee(beeMesh);
+pathCurve.objectToMove = bee;
+mainScene.scene.add(bee.mesh);
 export let trees = [
     new Tree(logMesh.clone(), leaveMesh.clone(), {vector:new THREE.Vector3(-1.7, -0.2, -2), rotationY : 0}),
     new Tree(logMesh.clone(), leaveMesh.clone(), {vector:new THREE.Vector3(-2, -0.5 , 2), rotationY : 90}),
@@ -40,7 +49,7 @@ export let flowers = [
     }),
 ];
 flowers.forEach(flower => {
-    mainScene.scene.add(flower.mainMesh);
+    mainScene.scene.add(flower.mesh);
 })
 
 const mainPlatform = new MainPlatform();
@@ -53,8 +62,12 @@ const clock = new THREE.Clock();
 
 CONTAINER.appendChild(mainScene.renderer.domElement);
 
-animate();
-function animate(){
+animate(0);
+function animate(time:DOMHighResTimeStamp){
+    if(pathCurve.canAnimateMesh){
+        pathCurve.moveMeshAlongPath(time);
+    }
+
     let delta = clock.getDelta();
     if(AnimationService.animationMixers.length != 0){
         AnimationService.animationMixers.forEach(mixer => {
