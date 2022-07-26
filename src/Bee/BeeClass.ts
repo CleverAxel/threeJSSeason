@@ -30,7 +30,15 @@ export class Bee implements IMeshFollowPath{
             AnimationService.animationActions.push(mixer.clipAction(BeeAnimation.beeAppearsClip));
         }
     }
-
+    
+    public animateBeeDisappears(){
+        if(this.mesh.visible){
+            const mixer = new AnimationMixer(this.beeMesh);
+            AnimationService.animationActions.push(mixer.clipAction(BeeAnimation.beeDisappearsClip));
+            pathCurve.canAnimateMesh = false;
+        }
+    }
+    
     public makeBeeFollowPath(){
         pathCurve.objectToMove = this;
         pathCurve.canAnimateMesh = true;
@@ -41,12 +49,6 @@ export class Bee implements IMeshFollowPath{
         this.beeMaterial.opacity = 0;
     }
 
-    public animateBeeDisappears(){
-        if(this.mesh.visible){
-            const mixer = new AnimationMixer(this.beeMesh);
-            AnimationService.animationActions.push(mixer.clipAction(BeeAnimation.beeDisappearsClip))
-        }
-    }
 
     public setBeeToFinalState(){
         this.beeMaterial.opacity = 1;

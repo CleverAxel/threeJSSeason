@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { Barbecue } from "./Barbecue/BarbecueClass";
 import { Bee } from "./Bee/BeeClass";
 import { PathCurve } from "./CurvePath/PathCurveClass";
 import { Flower } from "./Flower/FlowerClass";
@@ -16,6 +17,7 @@ let leaveMesh = await GLTFService.LoadGLTF("/leaveTree.glb");
 let logMesh = await GLTFService.LoadGLTF("/logTree.glb");
 let flowerMesh = await GLTFService.LoadGLTF("/flower.gltf", true);
 let beeMesh = await GLTFService.LoadGLTF("/beeCopy.gltf", true);
+let barbecueMesh = await GLTFService.LoadGLTF("/barbecue.gltf", true);
 
 export const seasonHandler = new SeasonHandler();
 export const mainScene = new MainScene();
@@ -23,8 +25,12 @@ export const pathCurve = new PathCurve();
 mainScene.scene.add(pathCurve.mesh)
 
 export let bee = new Bee(beeMesh);
-pathCurve.objectToMove = bee;
 mainScene.scene.add(bee.mesh);
+
+export let barbecue = new Barbecue(barbecueMesh);
+mainScene.scene.add(barbecue.mesh);
+
+
 export let trees = [
     new Tree(logMesh.clone(), leaveMesh.clone(), {vector:new THREE.Vector3(-1.7, -0.2, -2), rotationY : 0}),
     new Tree(logMesh.clone(), leaveMesh.clone(), {vector:new THREE.Vector3(-2, -0.5 , 2), rotationY : 90}),

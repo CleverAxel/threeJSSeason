@@ -1,6 +1,5 @@
 import { AnimationMixer, Color, MathUtils, Mesh, MeshStandardMaterial } from "three";
 import { IVector3NRotationY } from "../Interface/IVector3NRotationY";
-import { bee, pathCurve } from "../main";
 import { AnimationService } from "../Services/AnimationService";
 import { TreeAnimation } from "./TreeAnimation";
 
@@ -61,7 +60,7 @@ export class Tree{
         let oldColor = this.leaveMaterial.color.clone();
         let id = setInterval(() => {
             alpha += speed;
-            this.leaveMaterial.color.lerpColors(oldColor, colorToLerp, alpha > 1 ? 1 : alpha).convertSRGBToLinear();
+            this.leaveMaterial.color.lerpColors(oldColor, colorToLerp, alpha).convertSRGBToLinear();
             if(alpha > 1){
                 clearInterval(id);
             }

@@ -1,4 +1,4 @@
-import { bee, flowers, trees } from "../main";
+import { barbecue, bee, flowers, trees } from "../main";
 import { AnimationService } from "../Services/AnimationService";
 
 export class SeasonHandler{
@@ -8,6 +8,7 @@ export class SeasonHandler{
         leave:false,
         flower:false,
         bee:false,
+        barbecue:false,
     }
     constructor(){
         this.init();
@@ -91,6 +92,10 @@ export class SeasonHandler{
         if(this.isOnScene.bee){
             bee.animateBeeDisappears();
             this.isOnScene.bee = false;
+        }
+        if(this.isOnScene.barbecue == false){
+            barbecue.animateBarbecueAppears();
+            this.isOnScene.barbecue = true;
         }
         AnimationService.GetAnimationMixerFromAction();
         AnimationService.PlayAnimation(true, this.setPropsToFinalPositionForSummer.bind(this));
