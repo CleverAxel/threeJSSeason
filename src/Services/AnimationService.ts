@@ -56,7 +56,7 @@ export class AnimationService{
         
     }
 
-    private static animationMixerFinished(e:any){
+    private static animationMixerFinished(){
         //this.animationMixers = this.animationMixers.filter(mixer => mixer.getRoot().uuid != e.action._mixer._root.uuid);
         //console.log(e.action._mixer._root.uuid)
         this.counter++;

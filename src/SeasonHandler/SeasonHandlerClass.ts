@@ -1,4 +1,4 @@
-import { barbecue, bee, flowers, trees } from "../main";
+import { barbecue, bee, flowers, mainPlatform, tombstone, trees } from "../main";
 import { AnimationService } from "../Services/AnimationService";
 
 export class SeasonHandler{
@@ -9,6 +9,7 @@ export class SeasonHandler{
         flower:false,
         bee:false,
         barbecue:false,
+        tombstone:false,
     }
     constructor(){
         this.init();
@@ -31,7 +32,11 @@ export class SeasonHandler{
                         }
                     }
                     else if(i == 2){
-                        this.seasonChoosed = season.autumn;
+                        if(this.seasonChoosed != season.autumn){
+                            this.seasonChoosed = season.autumn;
+                            this.startAutumn();
+                        }
+
                     }
                     else if(i == 3){
                         this.seasonChoosed = season.winter;
@@ -45,6 +50,7 @@ export class SeasonHandler{
      * First call for spring animation
      **********************************/
     private startSpring(){
+        mainPlatform.LerpToSpringGrass();
         trees.forEach(tree => {
             tree.SpringLeave();
         });
@@ -56,6 +62,14 @@ export class SeasonHandler{
             bee.animateBeeAppears();
             bee.makeBeeFollowPath();
             this.isOnScene.bee = true;
+        }
+        if(this.isOnScene.barbecue){
+            barbecue.animateBarbecueDisappears();
+            this.isOnScene.barbecue = false;
+        }
+        if(this.isOnScene.tombstone){
+            tombstone.animateTombstoneDisappears();
+            this.isOnScene.tombstone = false;
         }
 
         AnimationService.GetAnimationMixerFromAction();
@@ -71,6 +85,8 @@ export class SeasonHandler{
             this.SetLeaveToFinalPosition();
             this.SetFlowersToFinalPosition();
             bee.setBeeToFinalState();
+            barbecue.removeBarbecueFromScene();
+            tombstone.removeTombstone();
         });
     }
     //#endregion
@@ -82,6 +98,7 @@ export class SeasonHandler{
      * First call for summer animation
      **********************************/
     private startSummer(){
+        mainPlatform.LerpToSummerGrass();
         trees.forEach(tree => {
             tree.SummerLeave();
         });
@@ -97,6 +114,10 @@ export class SeasonHandler{
             barbecue.animateBarbecueAppears();
             this.isOnScene.barbecue = true;
         }
+        if(this.isOnScene.tombstone){
+            tombstone.animateTombstoneDisappears();
+            this.isOnScene.tombstone = false;
+        }
         AnimationService.GetAnimationMixerFromAction();
         AnimationService.PlayAnimation(true, this.setPropsToFinalPositionForSummer.bind(this));
     }
@@ -108,10 +129,47 @@ export class SeasonHandler{
             this.SetLeaveToFinalPosition();
             this.SetFlowersToFinalPosition();
             bee.removeBeeFromScene();
+            barbecue.setBarbecueToFinalState();
+            tombstone.removeTombstone();
         });
     }
     //#endregion
 
+    //#region AUTUMN
+    private startAutumn(){
+        mainPlatform.LerpToAutumnGrass();
+        trees.forEach(tree => {
+            tree.AutumnLeave();
+        });
+        /*if(this.isOnScene.flower == false){
+            this.MakeFlowersAppearWithAnimation();
+            this.isOnScene.flower = true;
+        }*/
+        if(this.isOnScene.bee){
+            bee.animateBeeDisappears();
+            this.isOnScene.bee = false;
+        }
+        if(this.isOnScene.barbecue){
+            barbecue.animateBarbecueDisappears();
+            this.isOnScene.barbecue = false;
+        }
+        if(this.isOnScene.tombstone == false){
+            tombstone.animateTombstoneAppears();
+            this.isOnScene.tombstone = true;
+        }
+        AnimationService.GetAnimationMixerFromAction();
+        AnimationService.PlayAnimation(true, this.setPropsToFinalPositionForAutumn.bind(this));
+    }
+
+    private setPropsToFinalPositionForAutumn(){
+        setTimeout(() => {                
+            this.SetLeaveToFinalPosition();
+            bee.removeBeeFromScene();
+            barbecue.removeBarbecueFromScene();
+            tombstone.setTombstoneFinalPosition();
+        });
+    }
+    //#endregion
 
     private MakeFlowersAppearWithAnimation(){
         flowers.forEach(flower =>{

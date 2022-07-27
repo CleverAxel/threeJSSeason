@@ -24,7 +24,11 @@ export class MainScene{
         this.dirLight.position.set(3,10,3);
         this.dirLight.target.position.set(0,0,0);
         this.dirLight.castShadow = true;
-        this.dirLight.shadow.bias = -0.0001;
+        //this.dirLight.shadow.bias = -0.0004; //-0.0001
+
+        //const dirLightHelper = new DirectionalLightHelper( this.dirLight, 10 );
+        //this.scene.add( dirLightHelper );
+
         this.scene.add(this.dirLight);
         this.scene.add(this.ambLight);
         this.resize();

@@ -10,15 +10,16 @@ import { MainScene } from "./MainScene/MainSceneClass";
 import { SeasonHandler } from "./SeasonHandler/SeasonHandlerClass";
 import { AnimationService } from "./Services/AnimationService";
 import { GLTFService } from './Services/GLTFService';
+import { Tombstone } from "./Tombstone/TombstoneClass";
 import { Tree } from './Tree/TreeClass';
 const CONTAINER = document.getElementById("container") as HTMLDivElement;
 
 let leaveMesh = await GLTFService.LoadGLTF("/leaveTree.glb");
 let logMesh = await GLTFService.LoadGLTF("/logTree.glb");
-let flowerMesh = await GLTFService.LoadGLTF("/flower.gltf", true);
-let beeMesh = await GLTFService.LoadGLTF("/beeCopy.gltf", true);
-let barbecueMesh = await GLTFService.LoadGLTF("/barbecue.gltf", true);
-
+let flowerMesh = await GLTFService.LoadGLTF("/flower.glb", true);
+let beeMesh = await GLTFService.LoadGLTF("/bee.glb", true);
+let barbecueMesh = await GLTFService.LoadGLTF("/barbecue.glb", true);
+let tombstoneMesh = await GLTFService.LoadGLTF("/tombstone.glb", true);
 export const seasonHandler = new SeasonHandler();
 export const mainScene = new MainScene();
 export const pathCurve = new PathCurve();
@@ -30,6 +31,8 @@ mainScene.scene.add(bee.mesh);
 export let barbecue = new Barbecue(barbecueMesh);
 mainScene.scene.add(barbecue.mesh);
 
+export let tombstone = new Tombstone(tombstoneMesh);
+mainScene.scene.add(tombstone.mesh);
 
 export let trees = [
     new Tree(logMesh.clone(), leaveMesh.clone(), {vector:new THREE.Vector3(-1.7, -0.2, -2), rotationY : 0}),
@@ -58,7 +61,7 @@ flowers.forEach(flower => {
     mainScene.scene.add(flower.mesh);
 })
 
-const mainPlatform = new MainPlatform();
+export const mainPlatform = new MainPlatform();
 mainPlatform.addPlatformToScene();
 
 const controls = new OrbitControls( mainScene.camera, mainScene.renderer.domElement );
@@ -79,6 +82,11 @@ function animate(time:DOMHighResTimeStamp){
         AnimationService.animationMixers.forEach(mixer => {
             mixer.update(delta);
         });
+    }
+
+    if(barbecue.canAnimateSmoke){
+        barbecue.animateSmoke(delta);
+        
     }
     mainScene.renderer.render(mainScene.scene, mainScene.camera);
     requestAnimationFrame(animate);

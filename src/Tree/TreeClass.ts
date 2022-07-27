@@ -55,6 +55,16 @@ export class Tree{
         }
     }
 
+    AutumnLeave(){
+        if(this.leaveMesh.visible == false){
+            this.animateLeaveFall();
+            this.leaveMaterial.color.set(colorLeave.autumn).convertSRGBToLinear();
+        }else{
+        //this.leaveMaterial.color.set(colorLeave.summer).convertSRGBToLinear();
+            this.lerpColorLeave(0.15, colorLeave.autumn);
+        }
+    }
+
     private lerpColorLeave(speed:number, colorToLerp:Color){
         let alpha = 0;
         let oldColor = this.leaveMaterial.color.clone();
