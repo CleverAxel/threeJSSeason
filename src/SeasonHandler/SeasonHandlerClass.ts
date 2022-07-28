@@ -1,4 +1,4 @@
-import { barbecue, bee, flowers, leaveFallAutumn, mainPlatform, tombstone, trees } from "../main";
+import { barbecue, bee, flowers, leaveFallAutumn, mainPlatform, snowflakeHandler, tombstone, trees } from "../main";
 import { AnimationService } from "../Services/AnimationService";
 
 export class SeasonHandler{
@@ -39,8 +39,10 @@ export class SeasonHandler{
 
                     }
                     else if(i == 3){
-                        this.seasonChoosed = season.winter;
-                        this.startWinter();
+                        if(this.seasonChoosed != season.winter){
+                            this.seasonChoosed = season.winter;
+                            this.startWinter();
+                        }
                     }
                 });
             }
@@ -53,6 +55,8 @@ export class SeasonHandler{
     private startSpring(){
         mainPlatform.LerpToSpringGrass();
         leaveFallAutumn.animate = false;
+        snowflakeHandler.canAnimateSnow = false;
+        snowflakeHandler.removeSnowflakes();
         trees.forEach(tree => {
             tree.SpringLeave();
         });
@@ -101,6 +105,8 @@ export class SeasonHandler{
      **********************************/
     private startSummer(){
         leaveFallAutumn.animate = false;
+        snowflakeHandler.canAnimateSnow = false;
+        snowflakeHandler.removeSnowflakes();
         mainPlatform.LerpToSummerGrass();
         trees.forEach(tree => {
             tree.SummerLeave();
@@ -144,6 +150,8 @@ export class SeasonHandler{
      **********************************/
     private startAutumn(){
         leaveFallAutumn.animate = true;
+        snowflakeHandler.canAnimateSnow = false;
+        snowflakeHandler.removeSnowflakes();
         mainPlatform.LerpToAutumnGrass();
         trees.forEach(tree => {
             tree.AutumnLeave();
@@ -183,8 +191,13 @@ export class SeasonHandler{
     //#endregion
 
     //#region winter
+    /**********************************
+     * first call for winter animation
+     **********************************/
     private startWinter(){
         leaveFallAutumn.animate = false;
+        snowflakeHandler.canAnimateSnow = true;
+        snowflakeHandler.addSnowflakes();
         mainPlatform.LerpToWinterGrass();
         trees.forEach(tree => {
             tree.WinterLeave();
@@ -210,6 +223,9 @@ export class SeasonHandler{
         AnimationService.PlayAnimation(true, this.setPropsToFinalPositionForWinter.bind(this));
     }
 
+    /**********************************
+     * second call for winter animation
+     **********************************/
     private setPropsToFinalPositionForWinter(){
         setTimeout(() => {       
             this.SetFlowersToFinalPosition();         

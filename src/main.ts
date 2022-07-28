@@ -10,6 +10,7 @@ import { MainScene } from "./MainScene/MainSceneClass";
 import { SeasonHandler } from "./SeasonHandler/SeasonHandlerClass";
 import { AnimationService } from "./Services/AnimationService";
 import { GLTFService } from './Services/GLTFService';
+import { SnowflakeHandler } from "./Snowflake/SnowflakeHandler";
 import { Tombstone } from "./Tombstone/TombstoneClass";
 import { Tree } from './Tree/TreeClass';
 const CONTAINER = document.getElementById("container") as HTMLDivElement;
@@ -23,6 +24,8 @@ let barbecueMesh = await GLTFService.LoadGLTF("/barbecue.glb", true);
 let tombstoneMesh = await GLTFService.LoadGLTF("/tombstone.glb", true);
 export const seasonHandler = new SeasonHandler();
 export const mainScene = new MainScene();
+export const snowflakeHandler = new SnowflakeHandler()
+snowflakeHandler.createSnowflakes();
 export const pathCurve = new PathCurve();
 mainScene.scene.add(pathCurve.mesh)
 
@@ -34,6 +37,7 @@ mainScene.scene.add(barbecue.mesh);
 
 export let tombstone = new Tombstone(tombstoneMesh);
 mainScene.scene.add(tombstone.mesh);
+
 
 export let leaveFallAutumn = {
     animate:false
@@ -104,13 +108,17 @@ function animate(time:DOMHighResTimeStamp){
         });
     }
 
-    if(leaveFallAutumn.animate){
+    if(snowflakeHandler.canAnimateSnow){
+        snowflakeHandler.makeSnowflakesFall(delta);
+    }
+
+    else if(leaveFallAutumn.animate){
         trees.forEach(tree => {
             tree.makeAutumnLeaveFall(delta);
         });
     }
 
-    if(barbecue.canAnimateSmoke){
+    else if(barbecue.canAnimateSmoke){
         barbecue.animateSmoke(delta);
         
     }
