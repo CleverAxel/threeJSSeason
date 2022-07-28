@@ -5,6 +5,7 @@ const colorGrass =  {
     spring : new Color(0x94c26e),
     summer: new Color(0x77a651),
     autumn : new Color(0xbdb74d),
+    winter : new Color(0xf2f2f2)
 }
 
 export class MainPlatform{
@@ -48,6 +49,10 @@ export class MainPlatform{
 
     public LerpToAutumnGrass(){
         this.lerpColorGrass(0.15, colorGrass.autumn)
+    }
+
+    public LerpToWinterGrass(){
+        this.lerpColorGrass(0.15, colorGrass.winter)
     }
 
     private lerpColorGrass(speed:number, colorToLerp:Color){

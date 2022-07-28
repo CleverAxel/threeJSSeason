@@ -1,4 +1,4 @@
-import { AnimationMixer, Box3, Color, MathUtils, Mesh, MeshStandardMaterial } from "three";
+import { AnimationMixer, Box3, Color, Material, MathUtils, Mesh, MeshStandardMaterial } from "three";
 import { IVector3NRotationY } from "../Interface/IVector3NRotationY";
 import { AnimationService } from "../Services/AnimationService";
 import { LeaveAutumnClass } from "./LeaveAutumn/LeaveAutumnClass";
@@ -14,31 +14,37 @@ export class Tree{
     public mainMesh = new Mesh();
     public logMesh:Mesh;
     public leaveMesh:Mesh;
+    public snowMesh:Mesh;
 
     public logMaterial = new MeshStandardMaterial();
     public leaveMaterial = new MeshStandardMaterial();
+    public snowMaterial = new MeshStandardMaterial();
     public leaveBoundingBox = new Box3();
 
-    public leaveAutumn:LeaveAutumnClass;
+    public entityLeaveAutumn:LeaveAutumnClass;
 
-    constructor(logMesh:Mesh, leaveMesh:Mesh, position?:IVector3NRotationY){
+    constructor(logMesh:Mesh, leaveMesh:Mesh, snowMesh:Mesh, position?:IVector3NRotationY){
         this.logMesh = logMesh;
         this.leaveMesh = leaveMesh;
+        this.snowMesh = snowMesh;
+        this.logMesh.material = this.logMaterial;
+        this.leaveMesh.material = this.leaveMaterial;
+        this.snowMesh.material = this.snowMaterial as Material;
 
-        logMesh.material = this.logMaterial;
-        leaveMesh.material = this.leaveMaterial;
         this.logMaterial.color.set(0x856c51).convertSRGBToLinear();
         this.leaveMaterial.color.set(colorLeave.spring).convertSRGBToLinear();
+        this.snowMaterial.color.set(0xf2f2f2).convertSRGBToLinear();
         this.leaveMaterial.transparent = true;
+        this.snowMaterial.transparent = true;
         this.leaveMesh.visible = false;
-
+        this.snowMesh.visible = false;
         if(position){
             this.mainMesh.position.set(position.vector.x, position.vector.y, position.vector.z);
             this.mainMesh.rotation.y = MathUtils.degToRad(position.rotationY);
         }
-        this.mainMesh.add(logMesh, leaveMesh);
+        this.mainMesh.add(logMesh, leaveMesh, snowMesh);
         this.getLeaveBoudingBox();
-        this.leaveAutumn = new LeaveAutumnClass(this.leaveBoundingBox)
+        this.entityLeaveAutumn = new LeaveAutumnClass(this.leaveBoundingBox)
     }
 
     SpringLeave(){
@@ -48,7 +54,7 @@ export class Tree{
         }else{
             this.lerpColorLeave(0.15, colorLeave.spring);
         }
-        this.leaveAutumn.mesh.visible = false;
+        this.entityLeaveAutumn.mesh.visible = false;
     }
 
     SummerLeave(){
@@ -59,7 +65,7 @@ export class Tree{
         //this.leaveMaterial.color.set(colorLeave.summer).convertSRGBToLinear();
             this.lerpColorLeave(0.15, colorLeave.summer);
         }
-        this.leaveAutumn.mesh.visible = false;
+        this.entityLeaveAutumn.mesh.visible = false;
     }
 
     AutumnLeave(){
@@ -70,7 +76,22 @@ export class Tree{
         //this.leaveMaterial.color.set(colorLeave.summer).convertSRGBToLinear();
             this.lerpColorLeave(0.15, colorLeave.autumn);
         }
-        this.leaveAutumn.mesh.visible = true;
+        this.entityLeaveAutumn.mesh.visible = true;
+    }
+
+    WinterLeave(){
+        if(this.snowMesh.visible == false){
+            const mixer = new AnimationMixer(this.leaveMesh);
+            const mixerSnow = new AnimationMixer(this.snowMesh);
+            this.snowMesh.position.y = 15;
+            this.snowMaterial.opacity = 0;
+            this.snowMesh.visible = true;
+            AnimationService.animationActions.push(
+                mixer.clipAction(TreeAnimation.removeLeaveOrSnowClip), 
+                mixerSnow.clipAction(TreeAnimation.addLeaveOrSnowClip)
+            );
+        }
+        this.entityLeaveAutumn.mesh.visible = false;
     }
 
     private lerpColorLeave(speed:number, colorToLerp:Color){
@@ -90,13 +111,25 @@ export class Tree{
         this.leaveMaterial.opacity = 0;
         this.leaveMesh.visible = true;
         const mixer = new AnimationMixer(this.leaveMesh);
-        AnimationService.animationActions.push(mixer.clipAction(TreeAnimation.moveLeaveClip));
+        AnimationService.animationActions.push(mixer.clipAction(TreeAnimation.addLeaveOrSnowClip));
+        if(this.snowMesh.visible){
+            const mixerSnow = new AnimationMixer(this.snowMesh);
+            AnimationService.animationActions.push(mixerSnow.clipAction(TreeAnimation.removeLeaveOrSnowClip));
+        }
+    }
+
+    setSnowToFinalPosition(){
+        this.snowMesh.position.set(0,0,0);
+        this.snowMaterial.opacity = 1;
+        this.leaveMesh.visible = false;
+        this.snowMesh.visible = true;
     }
 
     setLeaveToFinalPosition(){
         this.leaveMesh.position.set(0,0,0);
         this.leaveMaterial.opacity = 1;
         this.leaveMesh.visible = true;
+        this.snowMesh.visible = false;
     }
 
     private getLeaveBoudingBox(){
@@ -108,7 +141,7 @@ export class Tree{
     }
 
     public makeAutumnLeaveFall(delta:number){
-        this.leaveAutumn.makeLeaveFall(delta);
+        this.entityLeaveAutumn.makeLeaveFall(delta);
     }
 
 

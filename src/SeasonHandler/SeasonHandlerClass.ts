@@ -40,6 +40,7 @@ export class SeasonHandler{
                     }
                     else if(i == 3){
                         this.seasonChoosed = season.winter;
+                        this.startWinter();
                     }
                 });
             }
@@ -139,7 +140,7 @@ export class SeasonHandler{
 
     //#region AUTUMN
     /**********************************
-     * second call for autumn animation
+     * first call for autumn animation
      **********************************/
     private startAutumn(){
         leaveFallAutumn.animate = true;
@@ -177,6 +178,48 @@ export class SeasonHandler{
             bee.removeBeeFromScene();
             barbecue.removeBarbecueFromScene();
             tombstone.setTombstoneFinalPosition();
+        });
+    }
+    //#endregion
+
+    //#region winter
+    private startWinter(){
+        leaveFallAutumn.animate = false;
+        mainPlatform.LerpToWinterGrass();
+        trees.forEach(tree => {
+            tree.WinterLeave();
+        });
+
+        if(this.isOnScene.flower == false){
+            this.MakeFlowersAppearWithAnimation();
+            this.isOnScene.flower = true;
+        }
+        if(this.isOnScene.bee){
+            bee.animateBeeDisappears();
+            this.isOnScene.bee = false;
+        }
+        if(this.isOnScene.barbecue){
+            barbecue.animateBarbecueDisappears();
+            this.isOnScene.barbecue = false;
+        }
+        if(this.isOnScene.tombstone){
+            tombstone.animateTombstoneDisappears();
+            this.isOnScene.tombstone = false;
+        }
+        AnimationService.GetAnimationMixerFromAction();
+        AnimationService.PlayAnimation(true, this.setPropsToFinalPositionForWinter.bind(this));
+    }
+
+    private setPropsToFinalPositionForWinter(){
+        setTimeout(() => {       
+            this.SetFlowersToFinalPosition();         
+            this.SetLeaveToFinalPosition();
+            bee.removeBeeFromScene();
+            barbecue.removeBarbecueFromScene();
+            tombstone.removeTombstone();
+            trees.forEach(tree =>{
+                tree.setSnowToFinalPosition();
+            });
         });
     }
     //#endregion

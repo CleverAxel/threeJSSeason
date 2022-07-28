@@ -16,6 +16,7 @@ const CONTAINER = document.getElementById("container") as HTMLDivElement;
 
 let leaveMesh = await GLTFService.LoadGLTF("/leaveTree.glb");
 let logMesh = await GLTFService.LoadGLTF("/logTree.glb");
+let snowMesh = await GLTFService.LoadGLTF("/snowTree.glb");
 let flowerMesh = await GLTFService.LoadGLTF("/flower.glb", true);
 let beeMesh = await GLTFService.LoadGLTF("/bee.glb", true);
 let barbecueMesh = await GLTFService.LoadGLTF("/barbecue.glb", true);
@@ -38,9 +39,9 @@ export let leaveFallAutumn = {
     animate:false
 };
 export let trees = [
-    new Tree(logMesh.clone(), leaveMesh.clone(), {vector:new THREE.Vector3(-1.7, -0.2, -2), rotationY : 0}),
-    new Tree(logMesh.clone(), leaveMesh.clone(), {vector:new THREE.Vector3(-2, -0.5 , 2), rotationY : 90}),
-    new Tree(logMesh.clone(), leaveMesh.clone(), {vector:new THREE.Vector3(2.8, 0, 0.7), rotationY : 180}),
+    new Tree(logMesh.clone(), leaveMesh.clone(), snowMesh.clone(), {vector:new THREE.Vector3(-1.7, -0.2, -2), rotationY : 0}),
+    new Tree(logMesh.clone(), leaveMesh.clone(), snowMesh.clone(), {vector:new THREE.Vector3(-2, -0.5 , 2), rotationY : 90}),
+    new Tree(logMesh.clone(), leaveMesh.clone(), snowMesh.clone(), {vector:new THREE.Vector3(2.8, 0, 0.7), rotationY : 180}),
 ];
 trees.forEach(tree => {
     mainScene.scene.add(tree.mainMesh);
