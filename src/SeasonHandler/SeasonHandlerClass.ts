@@ -53,6 +53,7 @@ export class SeasonHandler{
      * First call for spring animation
      **********************************/
     private startSpring(){
+        this.disableAllButtons();
         mainPlatform.LerpToSpringGrass();
         leaveFallAutumn.animate = false;
         snowflakeHandler.canAnimateSnow = false;
@@ -93,6 +94,7 @@ export class SeasonHandler{
             bee.setBeeToFinalState();
             barbecue.removeBarbecueFromScene();
             tombstone.removeTombstone();
+            this.enableAllButtons();
         });
     }
     //#endregion
@@ -104,6 +106,7 @@ export class SeasonHandler{
      * First call for summer animation
      **********************************/
     private startSummer(){
+        this.disableAllButtons();
         leaveFallAutumn.animate = false;
         snowflakeHandler.canAnimateSnow = false;
         snowflakeHandler.removeSnowflakes();
@@ -140,6 +143,7 @@ export class SeasonHandler{
             bee.removeBeeFromScene();
             barbecue.setBarbecueToFinalState();
             tombstone.removeTombstone();
+            this.enableAllButtons();
         });
     }
     //#endregion
@@ -149,6 +153,7 @@ export class SeasonHandler{
      * first call for autumn animation
      **********************************/
     private startAutumn(){
+        this.disableAllButtons();
         leaveFallAutumn.animate = true;
         snowflakeHandler.canAnimateSnow = false;
         snowflakeHandler.removeSnowflakes();
@@ -186,6 +191,7 @@ export class SeasonHandler{
             bee.removeBeeFromScene();
             barbecue.removeBarbecueFromScene();
             tombstone.setTombstoneFinalPosition();
+            this.enableAllButtons();
         });
     }
     //#endregion
@@ -195,6 +201,7 @@ export class SeasonHandler{
      * first call for winter animation
      **********************************/
     private startWinter(){
+        this.disableAllButtons();
         leaveFallAutumn.animate = false;
         snowflakeHandler.canAnimateSnow = true;
         snowflakeHandler.addSnowflakes();
@@ -235,6 +242,7 @@ export class SeasonHandler{
             tombstone.removeTombstone();
             trees.forEach(tree =>{
                 tree.setSnowToFinalPosition();
+                this.enableAllButtons();
             });
         });
     }
@@ -255,6 +263,18 @@ export class SeasonHandler{
     private SetLeaveToFinalPosition(){
         trees.forEach(tree =>{
             tree.setLeaveToFinalPosition();
+        });
+    }
+
+    private disableAllButtons(){
+        this.buttons.forEach(button => {
+            button.disabled = true;
+        });
+    }
+
+    private enableAllButtons(){
+        this.buttons.forEach(button => {
+            button.disabled = false;
         });
     }
 }
