@@ -1,4 +1,4 @@
-import { barbecue, bee, flowers, mainPlatform, tombstone, trees } from "../main";
+import { barbecue, bee, flowers, leaveFallAutumn, mainPlatform, tombstone, trees } from "../main";
 import { AnimationService } from "../Services/AnimationService";
 
 export class SeasonHandler{
@@ -51,6 +51,7 @@ export class SeasonHandler{
      **********************************/
     private startSpring(){
         mainPlatform.LerpToSpringGrass();
+        leaveFallAutumn.animate = false;
         trees.forEach(tree => {
             tree.SpringLeave();
         });
@@ -98,6 +99,7 @@ export class SeasonHandler{
      * First call for summer animation
      **********************************/
     private startSummer(){
+        leaveFallAutumn.animate = false;
         mainPlatform.LerpToSummerGrass();
         trees.forEach(tree => {
             tree.SummerLeave();
@@ -136,15 +138,19 @@ export class SeasonHandler{
     //#endregion
 
     //#region AUTUMN
+    /**********************************
+     * second call for autumn animation
+     **********************************/
     private startAutumn(){
+        leaveFallAutumn.animate = true;
         mainPlatform.LerpToAutumnGrass();
         trees.forEach(tree => {
             tree.AutumnLeave();
         });
-        /*if(this.isOnScene.flower == false){
+        if(this.isOnScene.flower == false){
             this.MakeFlowersAppearWithAnimation();
             this.isOnScene.flower = true;
-        }*/
+        }
         if(this.isOnScene.bee){
             bee.animateBeeDisappears();
             this.isOnScene.bee = false;
@@ -161,8 +167,12 @@ export class SeasonHandler{
         AnimationService.PlayAnimation(true, this.setPropsToFinalPositionForAutumn.bind(this));
     }
 
+    /**********************************
+     * second call for autumn animation
+     **********************************/
     private setPropsToFinalPositionForAutumn(){
-        setTimeout(() => {                
+        setTimeout(() => {       
+            this.SetFlowersToFinalPosition();         
             this.SetLeaveToFinalPosition();
             bee.removeBeeFromScene();
             barbecue.removeBarbecueFromScene();

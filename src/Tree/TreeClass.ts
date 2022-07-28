@@ -1,6 +1,7 @@
-import { AnimationMixer, Color, MathUtils, Mesh, MeshStandardMaterial } from "three";
+import { AnimationMixer, Box3, Color, MathUtils, Mesh, MeshStandardMaterial } from "three";
 import { IVector3NRotationY } from "../Interface/IVector3NRotationY";
 import { AnimationService } from "../Services/AnimationService";
+import { LeaveAutumnClass } from "./LeaveAutumn/LeaveAutumnClass";
 import { TreeAnimation } from "./TreeAnimation";
 
 const colorLeave = {
@@ -16,6 +17,9 @@ export class Tree{
 
     public logMaterial = new MeshStandardMaterial();
     public leaveMaterial = new MeshStandardMaterial();
+    public leaveBoundingBox = new Box3();
+
+    public leaveAutumn:LeaveAutumnClass;
 
     constructor(logMesh:Mesh, leaveMesh:Mesh, position?:IVector3NRotationY){
         this.logMesh = logMesh;
@@ -32,8 +36,9 @@ export class Tree{
             this.mainMesh.position.set(position.vector.x, position.vector.y, position.vector.z);
             this.mainMesh.rotation.y = MathUtils.degToRad(position.rotationY);
         }
-
         this.mainMesh.add(logMesh, leaveMesh);
+        this.getLeaveBoudingBox();
+        this.leaveAutumn = new LeaveAutumnClass(this.leaveBoundingBox)
     }
 
     SpringLeave(){
@@ -43,6 +48,7 @@ export class Tree{
         }else{
             this.lerpColorLeave(0.15, colorLeave.spring);
         }
+        this.leaveAutumn.mesh.visible = false;
     }
 
     SummerLeave(){
@@ -53,6 +59,7 @@ export class Tree{
         //this.leaveMaterial.color.set(colorLeave.summer).convertSRGBToLinear();
             this.lerpColorLeave(0.15, colorLeave.summer);
         }
+        this.leaveAutumn.mesh.visible = false;
     }
 
     AutumnLeave(){
@@ -63,6 +70,7 @@ export class Tree{
         //this.leaveMaterial.color.set(colorLeave.summer).convertSRGBToLinear();
             this.lerpColorLeave(0.15, colorLeave.autumn);
         }
+        this.leaveAutumn.mesh.visible = true;
     }
 
     private lerpColorLeave(speed:number, colorToLerp:Color){
@@ -90,6 +98,19 @@ export class Tree{
         this.leaveMaterial.opacity = 1;
         this.leaveMesh.visible = true;
     }
+
+    private getLeaveBoudingBox(){
+        this.leaveBoundingBox.setFromObject(this.mainMesh);
+        this.leaveBoundingBox.max.y -= 1.5;
+        this.leaveBoundingBox.min.y += 2;
+        this.leaveBoundingBox.max.y = Math.floor(this.leaveBoundingBox.max.y);
+        this.leaveBoundingBox.min.y = Math.floor(this.leaveBoundingBox.min.y);
+    }
+
+    public makeAutumnLeaveFall(delta:number){
+        this.leaveAutumn.makeLeaveFall(delta);
+    }
+
 
 }
 

@@ -34,6 +34,9 @@ mainScene.scene.add(barbecue.mesh);
 export let tombstone = new Tombstone(tombstoneMesh);
 mainScene.scene.add(tombstone.mesh);
 
+export let leaveFallAutumn = {
+    animate:false
+};
 export let trees = [
     new Tree(logMesh.clone(), leaveMesh.clone(), {vector:new THREE.Vector3(-1.7, -0.2, -2), rotationY : 0}),
     new Tree(logMesh.clone(), leaveMesh.clone(), {vector:new THREE.Vector3(-2, -0.5 , 2), rotationY : 90}),
@@ -68,8 +71,24 @@ const controls = new OrbitControls( mainScene.camera, mainScene.renderer.domElem
 controls.update();
 
 const clock = new THREE.Clock();
-
+/*const box = new THREE.Box3();
+box.setFromObject(trees[0].mainMesh);
+console.log(box)
+box.max.y -= 1.5;
+box.min.y += 2;
+const helper = new THREE.Box3Helper(box, new THREE.Color(0xa84c32))
+mainScene.scene.add(helper)*/
 CONTAINER.appendChild(mainScene.renderer.domElement);
+
+/*trees.forEach(tree => {
+    const box = new THREE.Box3();
+box.setFromObject(tree.mainMesh);
+console.log(box)
+box.max.y -= 1.5;
+box.min.y += 2;
+const helper = new THREE.Box3Helper(box, new THREE.Color(0xa84c32))
+mainScene.scene.add(helper)
+})*/
 
 animate(0);
 function animate(time:DOMHighResTimeStamp){
@@ -81,6 +100,12 @@ function animate(time:DOMHighResTimeStamp){
     if(AnimationService.animationMixers.length != 0){
         AnimationService.animationMixers.forEach(mixer => {
             mixer.update(delta);
+        });
+    }
+
+    if(leaveFallAutumn.animate){
+        trees.forEach(tree => {
+            tree.makeAutumnLeaveFall(delta);
         });
     }
 
